@@ -11,7 +11,7 @@ def main():
         chat_model.chat(prompt)
     else:
         # If no args provided, run the interactive version from core.py
-        from ollama.core import main as core_main
+        from src.ollama.core import main as core_main
         core_main()
 
 if __name__ == "__main__":
