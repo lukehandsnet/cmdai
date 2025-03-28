@@ -2,7 +2,7 @@
 """Command-line interface for Ollama chat client"""
 
 import sys
-from ollama.core import ChatModel
+from src.ollama.core import ChatModel
 
 def main():
     if len(sys.argv) > 1:

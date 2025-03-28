@@ -27,7 +27,7 @@ class ChatModel:
         ollama_host: str = "http://localhost:11434",
     ) -> None:
         self.model_name = model_name
-        self.ollama_host = os.environ.get("OLLAMA_HOST", ollama_host)
+        self.ollama_host = "http://localhost:11434"
 
         # Ensure proper URL format
         if not self.ollama_host.startswith(("http://", "https://")):
