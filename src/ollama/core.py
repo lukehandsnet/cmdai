@@ -10,7 +10,12 @@ import sys
 import json
 import requests
 import os
+import configparser
 from typing import Dict, List, Any, Optional, Generator
+
+# Read configuration
+config = configparser.ConfigParser()
+config.read(os.path.join(os.path.dirname(__file__), '../../config.ini'))
 
 
 class ChatModel:
@@ -22,12 +27,12 @@ class ChatModel:
 
     def __init__(
         self,
-        model_name: str = "deepseek-r1",
+        model_name: str = None,
         log_file: Optional[str] = None,
-        ollama_host: str = "http://localhost:11434",
+        ollama_host: str = None,
     ) -> None:
-        self.model_name = model_name
-        self.ollama_host = "http://localhost:11434"
+        self.model_name = model_name or config.get('Defaults', 'model_name')
+        self.ollama_host = ollama_host or config.get('Defaults', 'ollama_host')
 
         # Ensure proper URL format
         if not self.ollama_host.startswith(("http://", "https://")):
@@ -46,7 +51,7 @@ class ChatModel:
 
         # Set up log file path
         if log_file is None:
-            log_dir = os.path.expanduser("~/.ollama_logs")
+            log_dir = os.path.expanduser(config.get('Defaults', 'log_dir'))
             os.makedirs(log_dir, exist_ok=True)
             self.log_file = os.path.join(
                 log_dir,
