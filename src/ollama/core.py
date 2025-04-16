@@ -25,6 +25,8 @@ class ChatModel:
         model_name: str = "deepseek-r1",
         log_file: Optional[str] = None,
         ollama_host: str = "http://localhost:11434",
+        max_log_size: int = 1_000_000,  # 1MB
+        max_log_backups: int = 3,
     ) -> None:
         self.model_name = model_name
         
@@ -87,8 +89,8 @@ class ChatModel:
 
     def log_messages(self) -> None:
         """Save current conversation history to log file"""
-        with open(self.log_file, "w") as file:
-            json.dump(self.messages, file, indent=4)
+        with open(self.log_file, "w", encoding='utf-8') as file:
+            json.dump(self.messages, file, indent=4, ensure_ascii=False)
 
     def list_models(self) -> Dict[str, Any]:
         """List available Ollama models"""
