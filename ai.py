@@ -4,6 +4,7 @@
 import sys
 from src.ollama.core import ChatModel
 
+
 def main():
     try:
         if len(sys.argv) > 1:
