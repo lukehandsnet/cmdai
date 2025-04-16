@@ -19,7 +19,7 @@ class ChatModel:
     This class handles sending prompts to Ollama models, receiving
     and streaming responses, and maintaining conversation history.
     """
-
+    
     def __init__(
         self,
         model_name: str = "deepseek-r1",
