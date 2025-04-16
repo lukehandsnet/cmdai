@@ -162,17 +162,17 @@ def list_models_interactive() -> Optional[str]:
     """List models and prompt for selection, returns chosen model name"""
     chat_model = ChatModel()
     models_data = chat_model.list_models()
-    
+
     if not models_data.get("models"):
         print("No models found. Please install models first.")
         return None
-        
+
     print("\nAvailable models:")
     for i, model in enumerate(models_data["models"], 1):
         name = model.get("name", "Unknown").partition(":")[0]
         size = format_model_size(model.get("size", 0)) if "size" in model else "Unknown"
         print(f"{i}. {name} ({size})")
-    
+
     while True:
         try:
             choice = input("\nSelect model by number (or 'q' to quit): ")
