@@ -2,7 +2,7 @@
 """Command-line interface for Ollama chat client"""
 
 import sys
-from src.ollama.core import ChatModel
+from src.ollama.core import ChatModel, list_models_interactive
 
 
 def main():
@@ -18,7 +18,12 @@ def main():
             if not chat_model.test_connection():
                 sys.exit(1)
             
-            print("\nOllama Chat - Interactive Mode")
+            # Allow model selection
+            selected_model = list_models_interactive()
+            if selected_model:
+                chat_model.model_name = selected_model
+            
+            print(f"\nOllama Chat - Interactive Mode (Model: {chat_model.model_name})")
             print("Enter your prompt (or 'quit' to exit):")
             while True:
                 prompt = input("\n> ")
