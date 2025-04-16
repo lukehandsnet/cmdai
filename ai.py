@@ -25,15 +25,25 @@ import locale
 from src.ollama.core import ChatModel, list_models_interactive
 
 # Configure system for UTF-8
-sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8', errors='replace')
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
-
-# Set locale to UTF-8
-try:
-    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-except locale.Error:
-    pass  # Fall back to system default if UTF-8 locale not available
+if sys.platform == "win32":
+    import ctypes
+    # Enable UTF-8 mode and VT100 escape sequences for Windows 10+
+    if hasattr(ctypes, 'windll'):
+        ctypes.windll.kernel32.SetConsoleOutputCP(65001)
+        ctypes.windll.kernel32.SetConsoleCP(65001)
+    # Configure IO wrappers with more robust error handling
+    sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8', errors='backslashreplace')
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='backslashreplace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='backslashreplace')
+else:
+    # Standard UTF-8 configuration for other platforms
+    sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8', errors='replace')
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    try:
+        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+    except locale.Error:
+        pass
 
 
 def main() -> None:

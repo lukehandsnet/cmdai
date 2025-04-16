@@ -197,12 +197,18 @@ class ChatModel:
             if "message" in chunk and "content" in chunk["message"]:
                 content = chunk["message"]["content"]
                 try:
-                    # Try printing directly first
+                    # First try printing with default encoding
                     print(content, end="", flush=True)
                 except UnicodeEncodeError:
-                    # Fallback for terminals with limited encoding support
-                    safe_content = content.encode('utf-8', errors='replace').decode('utf-8')
-                    print(safe_content, end="", flush=True)
+                    try:
+                        # Try Windows-specific encoding
+                        if sys.platform == "win32":
+                            print(content.encode('utf-8').decode('utf-8', 'backslashreplace'), end="", flush=True)
+                        else:
+                            print(content.encode('utf-8', errors='replace').decode('utf-8'), end="", flush=True)
+                    except Exception:
+                        # Ultimate fallback - print raw bytes if all else fails
+                        print(str(content.encode('utf-8', errors='replace')), end="", flush=True)
                 full_response += content
 
         model_message = {"role": "assistant", "content": full_response}
