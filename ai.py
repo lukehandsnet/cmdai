@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-# ceate a readme.md for this project .AI!
 """Command-line interface for Ollama chat client.
 
 Features:
