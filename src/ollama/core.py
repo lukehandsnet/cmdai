@@ -27,22 +27,18 @@ class ChatModel:
         ollama_host: str = "http://localhost:11434",
     ) -> None:
         self.model_name = model_name
-        self.ollama_host = "http://localhost:11434"
-
-        # Ensure proper URL format
-        if not self.ollama_host.startswith(("http://", "https://")):
-            self.ollama_host = f"http://{self.ollama_host}"
-
+        
+        # Process and validate the host URL
+        if not ollama_host.startswith(("http://", "https://")):
+            ollama_host = f"http://{ollama_host}"
+        
         # Ensure port is specified
-        if ":11434" not in self.ollama_host and "//" in self.ollama_host:
-            base_url = (
-                self.ollama_host.split("//")[0]
-                + "//"
-                + self.ollama_host.split("//")[1].split("/")[0]
-            )
-            path = self.ollama_host[len(base_url):]
-            if ":" not in base_url.split("//")[1]:
-                self.ollama_host = f"{base_url}:11434{path}"
+        if ":" not in ollama_host.split("//")[1].split("/")[0]:
+            base_url = ollama_host.split("//")[0] + "//" + ollama_host.split("//")[1].split("/")[0]
+            path = ollama_host[len(base_url):]
+            ollama_host = f"{base_url}:11434{path}"
+        
+        self.ollama_host = ollama_host.rstrip("/")
 
         # Set up log file path
         if log_file is None:
