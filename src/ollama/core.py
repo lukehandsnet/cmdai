@@ -185,4 +185,5 @@ def list_models_interactive() -> Optional[str]:
 
 
 if __name__ == "__main__":
-    main()
+    print("This module is not meant to be run directly. Use ai.py instead.")
+    sys.exit(1)
