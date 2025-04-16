@@ -156,32 +156,32 @@ def format_date(date_str: str) -> str:
     return date_str
 
 
-def main():
-    """Command line entry point"""
-    ollama_host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+def list_models_interactive() -> Optional[str]:
+    """List models and prompt for selection, returns chosen model name"""
+    chat_model = ChatModel()
+    models_data = chat_model.list_models()
     
-    if len(sys.argv) > 1:
-        prompt = " ".join(sys.argv[1:])
-        chat_model = ChatModel(ollama_host=ollama_host)
-        chat_model.chat(prompt)
-        return
-
-    temp_model = ChatModel(ollama_host=ollama_host)
-    models_data = temp_model.list_models()
-
-    if "models" in models_data and models_data["models"]:
-        print("\nAvailable models:")
-        for model in models_data["models"]:
-            name = model.get("name", "Unknown").partition(":")[0]
-            size = format_model_size(model.get("size", 0)) if "size" in model else "Unknown"
-            modified = format_date(model.get("modified_at", "Unknown"))
-            print(f"Name: {name}, Size: {size}, Last Updated: {modified}")
-    else:
-        print("No models found")
-
-    model_name = input("\nWhich model would you like to use? ")
-    prompt = input("Enter your prompt: ")
-    ChatModel(model_name=model_name, ollama_host=ollama_host).chat(prompt)
+    if not models_data.get("models"):
+        print("No models found. Please install models first.")
+        return None
+        
+    print("\nAvailable models:")
+    for i, model in enumerate(models_data["models"], 1):
+        name = model.get("name", "Unknown").partition(":")[0]
+        size = format_model_size(model.get("size", 0)) if "size" in model else "Unknown"
+        print(f"{i}. {name} ({size})")
+    
+    while True:
+        try:
+            choice = input("\nSelect model by number (or 'q' to quit): ")
+            if choice.lower() == 'q':
+                return None
+            index = int(choice) - 1
+            if 0 <= index < len(models_data["models"]):
+                return models_data["models"][index]["name"]
+            print("Invalid selection")
+        except ValueError:
+            print("Please enter a number")
 
 
 if __name__ == "__main__":
