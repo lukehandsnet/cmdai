@@ -108,9 +108,10 @@ class ChatModel:
     def stream_chat(self, payload: Dict[str, Any]) -> Generator[Dict[str, Any], None, None]:
         """Stream chat responses from Ollama API"""
         try:
-            with requests.post(self.api_chat, json=payload, stream=True) as response:
+            with requests.post(self.api_chat, json=payload, stream=True, timeout=30) as response:
+                response.raise_for_status()  # Raises HTTPError for bad responses
                 if response.status_code != 200:
-                    print(f"Error: Server returned status code {response.status_code}")
+                    print(f"Error: {response.json().get('error', 'Unknown error')}")
                     return
 
                 for line in response.iter_lines():

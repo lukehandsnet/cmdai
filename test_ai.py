@@ -8,8 +8,12 @@ from src.ollama.core import ChatModel
 
 class MockChatModel(ChatModel):
     def __init__(self):
-        self.messages = []
+        super().__init__()
         self.api_chat = "http://mock-server/api/chat"
+        self.test_responses = {
+            "success": {"message": {"content": "Mock response"}},
+            "error": {"error": "Test error"}
+        }
         
     def load_messages(self) -> list:
         return []

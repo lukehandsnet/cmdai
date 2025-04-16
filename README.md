@@ -48,9 +48,27 @@ python -m src.ollama.core "Your prompt"
 ```
 
 ## Examples
-List available models:
+### Basic Chat
 ```bash
-python -m src.ollama.core --list
+python ai.py "Explain quantum computing"
+```
+
+### Model Management
+```bash
+# List models
+python ai.py --list-models
+
+# Pull new model
+python ai.py --pull-model llama3
+```
+
+### Advanced Usage
+```bash
+# Custom host and model
+OLLAMA_HOST=http://my-server:11434 OLLAMA_MODEL=llama2 python ai.py
+
+# Save conversation
+python ai.py --save-chat "discussion.json"
 ```
 
 Chat with specific model:
