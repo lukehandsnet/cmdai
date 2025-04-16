@@ -18,3 +18,13 @@ env/
 .vscode/
 *.swp
 *.swo
+
+# Aider related files
+.aider*
+.aider/
+aider-*.json
+aider-chat/
+aider.conf
+aider.log
+aider_*.md
+.aiderignore
