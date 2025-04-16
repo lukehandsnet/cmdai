@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """Command-line interface for Ollama chat client.
 
@@ -19,7 +20,20 @@ Environment Variables:
 """
 
 import sys
+import io
+import locale
 from src.ollama.core import ChatModel, list_models_interactive
+
+# Configure system for UTF-8
+sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8', errors='replace')
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
+# Set locale to UTF-8
+try:
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+except locale.Error:
+    pass  # Fall back to system default if UTF-8 locale not available
 
 
 def main() -> None:

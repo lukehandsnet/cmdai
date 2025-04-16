@@ -166,7 +166,8 @@ class ChatModel:
                 for line in response.iter_lines():
                     if line:
                         try:
-                            yield json.loads(line.decode("utf-8"))
+                            decoded_line = line.decode('utf-8', errors='replace')
+                            yield json.loads(decoded_line)
                         except json.JSONDecodeError:
                             print(f"Error parsing JSON: {line}")
         except requests.exceptions.RequestException as e:
@@ -195,7 +196,13 @@ class ChatModel:
         for chunk in self.stream_chat(payload):
             if "message" in chunk and "content" in chunk["message"]:
                 content = chunk["message"]["content"]
-                print(content, end="", flush=True)
+                try:
+                    # Try printing directly first
+                    print(content, end="", flush=True)
+                except UnicodeEncodeError:
+                    # Fallback for terminals with limited encoding support
+                    safe_content = content.encode('utf-8', errors='replace').decode('utf-8')
+                    print(safe_content, end="", flush=True)
                 full_response += content
 
         model_message = {"role": "assistant", "content": full_response}
