@@ -7,7 +7,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.ollama.core import ChatModel
 
 class MockChatModel(ChatModel):
-    def __init__(self):
+    """Mock implementation for testing"""
+    def __init__(self) -> None:
         super().__init__()
         self.api_chat = "http://mock-server/api/chat"
         self.test_responses = {
@@ -15,10 +16,11 @@ class MockChatModel(ChatModel):
             "error": {"error": "Test error"}
         }
         
-    def load_messages(self) -> list:
+    def load_messages(self) -> List[Dict[str, str]]:
         return []
         
     def chat(self, prompt: str) -> str:
+        """Mock chat implementation for testing"""
         print(f"Mock response to: {prompt}")
         return f"I'm a mock response to '{prompt}'"
 

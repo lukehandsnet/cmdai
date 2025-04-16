@@ -7,7 +7,8 @@ import sys
 from src.ollama.core import ChatModel, list_models_interactive
 
 
-def main():
+def main() -> None:
+    """Main entry point for the CLI"""
     try:
         if len(sys.argv) > 1:
             prompt = " ".join(sys.argv[1:])

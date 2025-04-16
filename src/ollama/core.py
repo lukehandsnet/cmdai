@@ -28,6 +28,12 @@ class ChatModel:
         max_log_size: int = 1_000_000,  # 1MB
         max_log_backups: int = 3,
     ) -> None:
+        self.model_name: str = model_name
+        self.ollama_host: str = ""
+        self.log_file: str = ""
+        self.messages: List[Dict[str, str]] = []
+        self.api_chat: str = ""
+        self.api_list: str = ""
         self.model_name = model_name
         
         # Process and validate the host URL
@@ -106,6 +112,17 @@ class ChatModel:
             return {"models": []}
 
     def stream_chat(self, payload: Dict[str, Any]) -> Generator[Dict[str, Any], None, None]:
+        """Stream chat responses from Ollama API
+        
+        Args:
+            payload: Dictionary containing chat parameters including:
+                - model: str - Model name
+                - messages: List[Dict[str, str]] - Conversation history
+                - stream: bool - Whether to stream response
+        
+        Yields:
+            Dict[str, Any]: Response chunks from the API
+        """
         """Stream chat responses from Ollama API"""
         try:
             with requests.post(self.api_chat, json=payload, stream=True, timeout=30) as response:
@@ -124,6 +141,14 @@ class ChatModel:
             print(f"Request error: {e}")
 
     def chat(self, prompt: str) -> str:
+        """Send prompt to model and return full response
+        
+        Args:
+            prompt: User input message
+            
+        Returns:
+            str: Complete response from model
+        """
         """Send prompt to model and return response"""
         user_message = {"role": "user", "content": prompt}
         self.messages.append(user_message)
@@ -148,11 +173,27 @@ class ChatModel:
 
 
 def format_model_size(size_bytes: int) -> str:
+    """Format bytes to human-readable GB string
+    
+    Args:
+        size_bytes: Size in bytes
+        
+    Returns:
+        str: Formatted size string with 3 decimal places
+    """
     """Format bytes to GB string"""
     return f"{size_bytes/1024/1024/1024:.3f} Gb"
 
 
 def format_date(date_str: str) -> str:
+    """Format ISO date string to YYYY-MM-DD
+    
+    Args:
+        date_str: Date string in ISO format
+        
+    Returns:
+        str: Date in YYYY-MM-DD format
+    """
     """Format ISO date to YYYY-MM-DD"""
     if "T" in date_str:
         return date_str.partition("T")[0]
@@ -160,6 +201,11 @@ def format_date(date_str: str) -> str:
 
 
 def list_models_interactive() -> Optional[str]:
+    """Interactive model selection prompt
+    
+    Returns:
+        Optional[str]: Selected model name or None if cancelled
+    """
     """List models and prompt for selection, returns chosen model name"""
     chat_model = ChatModel()
     models_data = chat_model.list_models()
