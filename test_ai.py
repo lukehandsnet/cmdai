@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-"""Test script with mock responses"""
+"""Test suite for Ollama chat client using mock responses.
+
+Contains MockChatModel class that simulates API responses for testing.
+Allows testing of core functionality without requiring a live Ollama server.
+
+Test Cases:
+- Basic chat response simulation
+- Error case simulation
+- Message history handling
+"""
 
 import sys
 import os
@@ -8,7 +17,16 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.ollama.core import ChatModel
 
 class MockChatModel(ChatModel):
-    """Mock implementation for testing"""
+    """Simulates ChatModel for testing purposes.
+
+    Overrides actual API calls with predefined responses.
+    Allows isolated testing of chat logic without network dependencies.
+
+    Attributes:
+        test_responses (Dict[str, Any]): Dictionary of response templates
+            - success: Normal chat response
+            - error: Error case response
+    """
     def __init__(self) -> None:
         super().__init__()
         self.api_chat = "http://mock-server/api/chat"

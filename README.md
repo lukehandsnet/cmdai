@@ -1,6 +1,16 @@
 # Ollama Command Line Chat Client
 
-A Python implementation for interacting with Ollama models via direct API requests.
+[![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+A robust Python implementation for interacting with Ollama models via direct API requests.
+
+## Key Features
+- **Streaming Chat**: Real-time response streaming with proper token handling
+- **Conversation History**: Automatic logging of conversations with configurable retention
+- **Model Management**: List and select available models interactively
+- **Connection Resilience**: Automatic retries and comprehensive error handling
+- **Cross-platform**: Works on Windows, Linux and macOS
 
 ## Features
 - Stream chat responses from Ollama models

@@ -14,10 +14,21 @@ from typing import Dict, List, Any, Optional, Generator
 
 
 class ChatModel:
-    """
-    A class for managing chat interactions with Ollama models using direct API requests.
-    This class handles sending prompts to Ollama models, receiving
-    and streaming responses, and maintaining conversation history.
+    """Manages chat interactions with Ollama models via direct API requests.
+
+    This class provides a complete interface for:
+    - Streaming chat responses
+    - Maintaining conversation history
+    - Model management
+    - Connection testing
+
+    Attributes:
+        model_name (str): Name of the currently selected model
+        ollama_host (str): Base URL for Ollama API
+        log_file (str): Path to conversation log file
+        messages (List[Dict[str, str]]): Conversation history
+        api_chat (str): Full URL for chat API endpoint
+        api_list (str): Full URL for model listing endpoint
     """
     
     def __init__(
@@ -64,7 +75,17 @@ class ChatModel:
         self.api_list = f"{self.ollama_host}/api/tags"
 
     def test_connection(self) -> bool:
-        """Test connection to Ollama API"""
+        """Tests connection to the Ollama API server.
+
+        Performs a health check by requesting version information from the API.
+        Provides troubleshooting guidance if connection fails.
+
+        Returns:
+            bool: True if connection succeeds, False otherwise
+
+        Raises:
+            requests.exceptions.RequestException: If network issues occur
+        """
         try:
             test_url = f"{self.ollama_host}/api/version"
             print(f"Testing connection to: {test_url}")
@@ -86,7 +107,18 @@ class ChatModel:
             return False
 
     def load_messages(self) -> List[Dict[str, str]]:
-        """Load conversation history from log file"""
+        """Loads conversation history from JSON log file.
+
+        Safely handles cases where the log file doesn't exist or is corrupted.
+
+        Returns:
+            List[Dict[str, str]]: List of message dictionaries with keys:
+                - role (str): 'user' or 'assistant'
+                - content (str): Message text
+
+        Note:
+            Returns empty list if file doesn't exist or contains invalid JSON
+        """
         try:
             with open(self.log_file, "r") as file:
                 return json.load(file)
