@@ -107,23 +107,18 @@ class ChatModel:
             return False
 
     def load_messages(self) -> List[Dict[str, str]]:
-        """Loads conversation history from JSON log file.
-
-        Safely handles cases where the log file doesn't exist or is corrupted.
-
-        Returns:
-            List[Dict[str, str]]: List of message dictionaries with keys:
-                - role (str): 'user' or 'assistant'
-                - content (str): Message text
-
-        Note:
-            Returns empty list if file doesn't exist or contains invalid JSON
-        """
         try:
-            with open(self.log_file, "r") as file:
+            with open(self.log_file, "r", encoding='utf-8') as file:
                 return json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
-            return []  # Return empty list if file doesn't exist or is corrupt
+            return []
+        except UnicodeDecodeError:
+            # Fallback method if UTF-8 fails
+            try:
+                with open(self.log_file, "r", encoding='latin-1') as file:
+                    return json.load(file)
+            except:
+                return []
 
     def log_messages(self) -> None:
         """Save current conversation history to log file"""
@@ -243,7 +238,6 @@ def format_date(date_str: str) -> str:
     if "T" in date_str:
         return date_str.partition("T")[0]
     return date_str
-
 
 def list_models_interactive() -> Optional[str]:
     """Interactive model selection prompt
