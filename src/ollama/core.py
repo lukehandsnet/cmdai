@@ -45,6 +45,7 @@ class ChatModel:
         self.messages: List[Dict[str, str]] = []
         self.api_chat: str = ""
         self.api_list: str = ""
+        self.api_show: str = ""  # Added for model details endpoint
         self.model_name = model_name
         
         # Process and validate the host URL
@@ -73,6 +74,7 @@ class ChatModel:
         self.messages = self.load_messages()
         self.api_chat = f"{self.ollama_host}/api/chat"
         self.api_list = f"{self.ollama_host}/api/tags"
+        self.api_show = f"{self.ollama_host}/api/show"  # Define the show endpoint URL
 
     def test_connection(self) -> bool:
         """Tests connection to the Ollama API server.
@@ -124,6 +126,33 @@ class ChatModel:
         """Save current conversation history to log file"""
         with open(self.log_file, "w", encoding='utf-8') as file:
             json.dump(self.messages, file, indent=4, ensure_ascii=False)
+
+    def show_model_details(self, model_name: str) -> Optional[Dict[str, Any]]:
+        """Retrieves detailed information about a specific model.
+
+        Args:
+            model_name: The name of the model to query.
+
+        Returns:
+            A dictionary containing the model details, or None if an error occurs.
+        """
+        payload = {"name": model_name}
+        try:
+            response = requests.post(self.api_show, json=payload, timeout=10)
+            response.raise_for_status()  # Raises HTTPError for bad responses (e.g., 404 Not Found)
+            return response.json()
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                print(f"Error: Model '{model_name}' not found.")
+            else:
+                print(f"HTTP error retrieving model details for '{model_name}': {e}")
+            return None
+        except requests.exceptions.RequestException as e:
+            print(f"Request error retrieving model details for '{model_name}': {e}")
+            return None
+        except json.JSONDecodeError:
+            print(f"Error decoding JSON response for model '{model_name}'.")
+            return None
 
     def list_models(self) -> Dict[str, Any]:
         """List available Ollama models"""
